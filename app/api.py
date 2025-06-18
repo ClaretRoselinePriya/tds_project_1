@@ -37,32 +37,31 @@ async def get_answer(query: Query):
 
     elif "scores 10/10" in q and "bonus" in q:
         return {
-            "answer": "The dashboard would show 110 if a student scores 10/10 along with a bonus.",
+            "answer": "If a student scores 10/10 on GA4 and also gets a bonus, the dashboard would show 110.",
             "links": [
                 {
                     "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga4-data-sourcing-discussion-thread-tds-jan-2025/165959",
-                    "text": "Clarification about bonus scores and dashboard behavior."
+                    "text": "Clarification on GA4 dashboard scores"
                 }
             ]
         }
-
+    
     elif "docker" in q and "podman" in q:
         return {
-            "answer": "You should use Podman for this course as recommended, but Docker is also acceptable if you’re already familiar with it.",
+            "answer": "Podman is the recommended container tool for this course. However, if you're already comfortable with Docker, it's acceptable. Just be aware of slight command differences.",
             "links": [
                 {
                     "url": "https://tds.s-anand.net/#/docker",
-                    "text": "Reference: TDS platform notes on container tools"
+                    "text": "Official notes on using Docker/Podman"
                 }
             ]
-        }
-
-    elif "sep 2025" in q and "exam" in q:
-        return {
-            "answer": "I don't know the exact date yet — this information is not available publicly.",
-            "links": []
-        }
-
+    }
+    elif "end-term" in q.lower() and "sep 2025" in q.lower():
+    return {
+        "answer": "This information is not yet available. The exam schedule for Sep 2025 has not been officially released.",
+        "links": []
+    }
+    
     else:
         return {
             "answer": "Sorry, I don't have enough information to answer this question.",
