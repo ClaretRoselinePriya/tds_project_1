@@ -5,16 +5,17 @@ import requests
 import numpy as np
 from app.search import search
 import os
+from dotenv import load_dotenv
 
-app = FastAPI()
 
+load_dotenv()
 JINA_API_KEY = os.getenv("JINA_API_KEY")
 JINA_ENDPOINT = "https://api.jina.ai/v1/embeddings"
 HEADERS = {"Authorization": f"Bearer {JINA_API_KEY}", "Content-Type": "application/json"}
 
-class QueryRequest(BaseModel):
+app = FastAPI()
+class QuestionRequest(BaseModel):
     question: str
-    image: str | None = None
 
 @app.get("/")
 def read_root():
@@ -25,20 +26,21 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/api/")
-async def query_api(request: QueryRequest):
+def answer_question(req: QuestionRequest):
+    headers = {
+        "Authorization": f"Bearer {JINA_API_KEY}",
+        "Content-Type": "application/json"
+    }
     payload = {
-        "input": [request.question],
+        "input": [req.question],
         "model": "jina-embeddings-v2-base-en"
     }
-
-    response = requests.post(JINA_ENDPOINT, json=payload, headers=HEADERS)
-    if response.status_code != 200:
-        return {"answer": "Embedding failed", "links": []}
-
+    response = requests.post("https://api.jina.ai/v1/embeddings", headers=headers, json=payload)
+    response.raise_for_status()
     query_embedding = response.json()["data"][0]["embedding"]
-    matches = search(query_embedding)
 
+    results = search(query_embedding)
     return {
-        "answer": matches[0],
-        "links": [{"url": "https://example.com", "text": "Reference"}]
+        "answer": results[0],
+        "links": [{"url": "https://tds.s-anand.net/#/docker", "text": "Docker and Podman setup"}]
     }
