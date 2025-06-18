@@ -8,6 +8,10 @@ class Query(BaseModel):
     question: str
     image: Optional[str] = None
 
+@app.get("/")
+def read_root():
+    return {"status": "TDS Virtual TA is running"}
+    
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
