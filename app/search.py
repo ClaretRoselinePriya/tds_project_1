@@ -1,12 +1,14 @@
-# app/search.py
+# search.py
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-data = np.load("embeddings.npz")
+# Load embeddings
+data = np.load("embeddings.npz", allow_pickle=True)
 embeddings = data["embeddings"]
-texts = data["chunks"]
+chunks = data["chunks"]
 
+# Search function
 def search(query_embedding, top_k=3):
-    sims = cosine_similarity([query_embedding], embeddings)[0]
-    top_indices = sims.argsort()[::-1][:top_k]
-    return [texts[i] for i in top_indices]
+    similarities = cosine_similarity([query_embedding], embeddings)[0]
+    top_indices = similarities.argsort()[-top_k:][::-1]
+    return [chunks[i] for i in top_indices]
