@@ -1,5 +1,5 @@
 # app/api.py
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
 from app.search import search
 import requests
@@ -30,17 +30,16 @@ async def handle_question(query: Query):
     embedding = res.json()["data"][0]["embedding"]
     results = search(embedding)
 
-    # Convert results into dummy links (you can improve formatting based on real data)
+    answer_text = "\n".join(results) if isinstance(results, list) else str(results)
+
     links = []
     for r in results:
         links.append({
             "url": "https://discourse.onlinedegree.iitm.ac.in/t/example-thread",
-            "text": r[:50]  # First 50 chars as link text
+            "text": r[:50]
         })
 
-    answer = "\n".join(results) if isinstance(results, list) else str(results)
-
     return {
-        "answer": answer,
+        "answer": answer_text,
         "links": links
     }
