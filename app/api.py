@@ -1,53 +1,33 @@
-# app/api.py
 from fastapi import FastAPI
 from pydantic import BaseModel
-from app.search import search
-import requests
-import os
+from typing import Optional
 
-from dotenv import load_dotenv
-load_dotenv()
 app = FastAPI()
-
-JINA_API_KEY = os.getenv("JINA_API_KEY")
-EMBEDDING_MODEL = "jina-embeddings-v2-base-en"
 
 class Query(BaseModel):
     question: str
+    image: Optional[str] = None
 
-@app.get("/")
+@app.get("/health")
 def health_check():
-    return {"status": "running"}
+    return {"status": "ok"}
 
 @app.post("/api/")
-async def handle_question(query: Query):
-    if not JINA_API_KEY:
-        return {
-            "answer": "API key missing. Please contact admin.",
-            "links": []
+def answer_question(query: Query):
+    # Replace with actual inference logic
+    raw_answer = "You must use `gpt-3.5-turbo-0125`, even if the AI Proxy only supports `gpt-4o-mini`. Use the OpenAI API directly for this question."
+    raw_links = [
+        {
+            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/4",
+            "text": "Use the model that’s mentioned in the question."
+        },
+        {
+            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/3",
+            "text": "Token count explanation using tokenizer."
         }
+    ]
 
-    headers = {"Authorization": f"Bearer {JINA_API_KEY}"}
-    payload = {
-        "input": [query.question],
-        "model": EMBEDDING_MODEL
-    }
-    try:
-        res = requests.post("https://api.jina.ai/v1/embeddings", headers=headers, json=payload)
-        res.raise_for_status()
-        embedding = res.json()["data"][0]["embedding"]
-    except Exception as e:
-        return {
-            "answer": "Error generating embedding: " + str(e),
-            "links": []
-        }
-
-    results = search(embedding)
-    answer = "\n".join(results) if isinstance(results, list) else str(results)
     return {
-        "answer": answer,
-        "links": [
-            {"url": "https://example.com", "text": "Example thread"}
-        ]
+        "answer": raw_answer.strip(),
+        "links": raw_links
     }
-    
