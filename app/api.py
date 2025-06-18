@@ -11,7 +11,7 @@ class Query(BaseModel):
 @app.get("/")
 def read_root():
     return {"status": "TDS Virtual TA is running"}
-    
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -37,29 +37,29 @@ async def get_answer(query: Query):
 
     elif "scores 10/10" in q and "bonus" in q:
         return {
-            "answer": "If a student scores 10/10 and receives a bonus, the dashboard would display 110, showing both scores together.",
+            "answer": "The dashboard would show 110 if a student scores 10/10 along with a bonus.",
             "links": [
                 {
                     "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga4-data-sourcing-discussion-thread-tds-jan-2025/165959",
-                    "text": "Clarification about dashboard scores."
+                    "text": "Clarification about bonus scores and dashboard behavior."
                 }
             ]
         }
 
     elif "docker" in q and "podman" in q:
         return {
-            "answer": "Podman is recommended for this course because it's more secure and rootless. However, Docker is acceptable if you're already familiar with it.",
+            "answer": "You should use Podman for this course as recommended, but Docker is also acceptable if you’re already familiar with it.",
             "links": [
                 {
                     "url": "https://tds.s-anand.net/#/docker",
-                    "text": "Course reference on container tools."
+                    "text": "Reference: TDS platform notes on container tools"
                 }
             ]
         }
 
     elif "sep 2025" in q and "exam" in q:
         return {
-            "answer": "The Sep 2025 end-term exam date has not been published yet. Please check the TDS course page later for updates.",
+            "answer": "I don't know the exact date yet — this information is not available publicly.",
             "links": []
         }
 
@@ -68,10 +68,6 @@ async def get_answer(query: Query):
             "answer": "Sorry, I don't have enough information to answer this question.",
             "links": []
         }
-
-@app.get("/health")
-async def health_check():
-    return {"status": "ok"}
 
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=7860)
