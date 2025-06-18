@@ -57,9 +57,9 @@ async def get_answer(query: Query):
             ]
     }
     elif "end-term" in q.lower() and "sep 2025" in q.lower():
-    return {
-        "answer": "This information is not yet available. The exam schedule for Sep 2025 has not been officially released.",
-        "links": []
+        return {
+            "answer": "This information is not yet available. The exam schedule for Sep 2025 has not been officially released.",
+            "links": []
     }
     
     else:
