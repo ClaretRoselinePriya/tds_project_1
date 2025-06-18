@@ -21,30 +21,33 @@ def health_check():
 
 @app.post("/api/")
 async def handle_question(query: Query):
+    if not JINA_API_KEY:
+        return {
+            "answer": "API key missing. Please contact admin.",
+            "links": []
+        }
+
     headers = {"Authorization": f"Bearer {JINA_API_KEY}"}
     payload = {
         "input": [query.question],
         "model": EMBEDDING_MODEL
     }
-    res = requests.post("https://api.jina.ai/v1/embeddings", headers=headers, json=payload)
-    embedding = res.json()["data"][0]["embedding"]
-    results = search(embedding)
-
-    # Construct a meaningful answer and links (placeholder example below)
-    answer = "You must use `gpt-3.5-turbo-0125`, even if the AI Proxy only supports `gpt-4o-mini`. Use the OpenAI API directly for this question."
-
-    links = [
-        {
-            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/4",
-            "text": "Use the model that’s mentioned in the question."
-        },
-        {
-            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/3",
-            "text": "My understanding is that you just have to use a tokenizer, similar to what Prof. Anand used, to get the number of tokens and multiply that by the given rate."
+    try:
+        res = requests.post("https://api.jina.ai/v1/embeddings", headers=headers, json=payload)
+        res.raise_for_status()
+        embedding = res.json()["data"][0]["embedding"]
+    except Exception as e:
+        return {
+            "answer": "Error generating embedding: " + str(e),
+            "links": []
         }
-    ]
 
+    results = search(embedding)
+    answer = "\n".join(results) if isinstance(results, list) else str(results)
     return {
         "answer": answer,
-        "links": links
+        "links": [
+            {"url": "https://example.com", "text": "Example thread"}
+        ]
     }
+    
