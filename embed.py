@@ -41,5 +41,5 @@ for chunk in tqdm(docs, desc="Jina Embedding"):
     emb = get_embedding(chunk)
     embeddings.append(emb)
 
-np.savez("embeddings.npz", embeddings=embeddings, metadatas=metadatas)
+np.savez("embeddings.npz", embeddings=np.array(embeddings), chunks=np.array(chunks))
 print("✅ Done. Saved full embeddings to embeddings.npz")
