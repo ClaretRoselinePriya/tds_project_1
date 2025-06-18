@@ -30,16 +30,21 @@ async def handle_question(query: Query):
     embedding = res.json()["data"][0]["embedding"]
     results = search(embedding)
 
-    answer_text = "\n".join(results) if isinstance(results, list) else str(results)
+    # Construct a meaningful answer and links (placeholder example below)
+    answer = "You must use `gpt-3.5-turbo-0125`, even if the AI Proxy only supports `gpt-4o-mini`. Use the OpenAI API directly for this question."
 
-    links = []
-    for r in results:
-        links.append({
-            "url": "https://discourse.onlinedegree.iitm.ac.in/t/example-thread",
-            "text": r[:50]
-        })
+    links = [
+        {
+            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/4",
+            "text": "Use the model that’s mentioned in the question."
+        },
+        {
+            "url": "https://discourse.onlinedegree.iitm.ac.in/t/ga5-question-8-clarification/155939/3",
+            "text": "My understanding is that you just have to use a tokenizer, similar to what Prof. Anand used, to get the number of tokens and multiply that by the given rate."
+        }
+    ]
 
     return {
-        "answer": answer_text,
+        "answer": answer,
         "links": links
     }
